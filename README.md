@@ -15,10 +15,38 @@ A structured log of reverse-engineering an idle home gateway router to capture, 
 
 ---
 
-## 2. The Journey (The How)
+
+### 2. The Journey (The How)
 
 ### Phase 0: Concept Validation
 Before spending money on any extra hardware or adapters, I wanted to see if it was even possible to share internet traffic this way. 
 * **The Setup:** I connected my PC to the internet and used AI for guidance to figure out the local routing mechanics. I managed to successfully set up a software bridge to broadcast the link from the PC.
 * **The Catch:** While it worked and validated that the routing logic was sound, the internet only stayed live if the host PC itself remained powered on and actively tethered. 
 * **The Conclusion:** This is obviously not practical for a daily study setup, but it proved the idea works. Now I need to figure out a way to move the connection through a dedicated hardware bridge instead of keeping the PC running 24/7.
+
+### Phase 1: Physical Layer Testing & The Hardware Wall (Dec 12 – Dec 26, 2025)
+Once the Amkette 8-in-1 multi-port hub finally arrived, I spent days testing it with my mom's Samsung Galaxy A35 to establish a direct hardware bridge via a CAT 5e UTP cable plugged into the router's WAN port. 
+
+#### 1. Learning the Physical LED Interface
+Before looking at software settings, I had to learn what the physical port lights actually meant so I could see how the hardware was handshaking:
+* **Yellow Light:** Indicates active data packet transmission. If it stays completely solid/static and doesn't flicker, no data is moving.
+* **Green vs. Red/Orange Light:** Indicates the link speed capability. I discovered the green light isn't fixed. When testing a link directly between the hub and my PC's port, the LED turned **Red/Orange**, showing a degraded connection profile or a total failure to negotiate proper speeds.
+
+#### 2. Core Obstacles with the A35
+I hit massive, unexpected hardware lockouts during my attempts:
+* **The Power Delivery (PD) Conflict:** The moment I plugged a fast charger into the hub's PD port to keep my mom's phone charged during study sessions, the phone completely refused to tether. The "Ethernet Tethering" toggle instantly greyed out and became unavailable.
+* **The "No Internet" Trap:** Even on battery power when I successfully toggled Ethernet Tethering ON, the PC connected to the router's Wi-Fi still showed "No Internet," and the physical LEDs remained completely static without flickering.
+
+#### 3. Troubleshooting Steps & Sequences I Attempted
+I realized quickly that in networking, you can't just randomly connect components; sequences matter heavily. I tested multiple distinct approaches:
+
+* **The "Wake Up" Sequence:** I tried a timed reboot order: Unplug ethernet -> Turn OFF tethering -> Unplug the Jio Router's power for 10 seconds -> Wait for the router's Wi-Fi light to blink -> Re-plug everything -> Toggle tethering back ON. *Result: Still no internet status.*
+* **Killing DHCP:** I logged into the router's admin dashboard and turned DHCP completely OFF. *Result:* Total communication breakdown. The phone stopped recognizing the router entirely, forcing me to toggle DHCP back ON just to restore basic interface visibility.
+* **The Low-Battery Security Lockout:** During these heavy testing cycles, the Ethernet option suddenly refused to turn ON altogether. I noticed the phone's battery had dropped down to 12%. I deduced that Android systems silently lock out power-heavy external network drivers at low battery percentages as a core safety feature.
+* **Developer Settings Tweaks:** I went deep into Android Developer Options and manually enabled *USB Tethering in Default USB Configurations* and *Tethering Hardware Acceleration*, while ensuring *Data Saver* was completely OFF. *Result: Still stuck on a solid Red/Orange light with zero yellow activity.*
+
+#### 4. Final Phase 1 Conclusion & Hypothesis
+After executing every loop sequence possible, the Ethernet Tethering on the A35 simply would not route data. 
+* **My Hypothesis:** Since this is a massive multi-port hub and not a simple single-purpose Ethernet-to-Type-C adapter, the Samsung A35's basic software build likely lacks the necessary kernel drivers to talk to the hub's internal network controller chip.
+* **Next Step:** My brand new personal phone—a Samsung Galaxy M36 5G—is scheduled to arrive in 2 days (Dec 28th). I finally got it because I am entering Class 12 and genuinely need my own device for my studies. Before giving up and returning the hub, I will hold onto it to run an isolated chipset test using my new phone to see if it's a driver barrier or a dead hub.
+
