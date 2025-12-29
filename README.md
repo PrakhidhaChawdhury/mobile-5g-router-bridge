@@ -15,8 +15,21 @@ A structured log of reverse-engineering an idle home gateway router to capture, 
 
 ---
 
+## 2. Repository Structure
 
-### 2. The Journey (The How)
+```text
+├── README.md                           <-- Core document (Why, Journey, Learnings)
+└── Assets/
+    ├── Notes/
+    │   ├── Project Status --01.txt    <-- Raw text logs for Phase 1 (A35 failure states)
+    │   └── Project Status --02.txt    <-- Raw text logs for Phase 2 (Gateway exceptions)
+    └── Photos/
+        ├── 20251219_222727.jpg        <-- Physical layer LED indicator verification
+        └── [Remaining photographic proof assets...]
+```
+---
+
+### 3. The Journey (The How)
 
 ### Phase 0: Concept Validation
 Before spending money on any extra hardware or adapters, I wanted to see if it was even possible to share internet traffic this way. 
@@ -24,7 +37,7 @@ Before spending money on any extra hardware or adapters, I wanted to see if it w
 * **The Catch:** While it worked and validated that the routing logic was sound, the internet only stayed live if the host PC itself remained powered on and actively tethered. 
 * **The Conclusion:** This is obviously not practical for a daily study setup, but it proved the idea works. Now I need to figure out a way to move the connection through a dedicated hardware bridge instead of keeping the PC running 24/7.
 
-### Phase 1: Physical Layer Testing & The Hardware Wall (Dec 12 – Dec 26, 2025)
+### Phase 1: Physical Layer Testing & The Hardware Wall
 Once the Amkette 8-in-1 multi-port hub finally arrived, I spent days testing it with my mom's Samsung Galaxy A35 to establish a direct hardware bridge via a CAT 5e UTP cable plugged into the router's WAN port. 
 
 #### 1. Learning the Physical LED Interface
@@ -50,3 +63,30 @@ After executing every loop sequence possible, the Ethernet Tethering on the A35 
 * **My Hypothesis:** Since this is a massive multi-port hub and not a simple single-purpose Ethernet-to-Type-C adapter, the Samsung A35's basic software build likely lacks the necessary kernel drivers to talk to the hub's internal network controller chip.
 * **Next Step:** My brand new personal phone—a Samsung Galaxy M36 5G—is scheduled to arrive in 2 days (Dec 28th). I finally got it because I am entering Class 12 and genuinely need my own device for my studies. Before giving up and returning the hub, I will hold onto it to run an isolated chipset test using my new phone to see if it's a driver barrier or a dead hub.
 
+### Phase 2: Chipset Isolation & Firmware Subnet Resolution
+My personal Samsung Galaxy M36 5G arrived on December 28th, and I immediately began re-running the exact same hardware array late into the night.
+
+#### 1. The Driver Breakthrough
+Unlike the A35, the M36 5G instantly recognized the Amkette hub, handled simultaneous Power Delivery (PD) charging without throwing any lockouts, and cleanly exposed the Ethernet tethering protocol toggle. This confirmed my previous hypothesis: the hub was perfectly fine. The earlier failure was entirely down to device-specific driver limitations inside the A35's software layer.
+
+#### 2. The Throughput Bottleneck
+Once the link bridged back to my workstation PC, I ran a speed test via fast.com. 
+* **The Discrepancy:** The M36 5G natively pulled **260 Mbps** over its unlimited 5G hotspot link. However, the connection bridged through the hub to the PC throttled intensely down to **22 Mbps**. 
+* **The Logic:** While the physical connection was active, a severe throughput bottleneck was occurring across the hardware interface layer.
+
+#### 3. Catching the DHCP Subnet Exception
+Routing the hub directly into the factory-default Jio router's Ethernet port brought back the frustrating "No Internet" status on my connected devices. To locate the barrier, I accessed the local gateway administration terminal interface at `192.168.31.1` and caught a critical firmware exception:
+
+> `Configuration Error: DHCP Starting IP address and LAN should be in the same subnet.`
+
+* **The Root Cause:** The automated factory reset sequence had misconfigured the default DHCP pool. The router was actively trying to assign local IP address leases that sat completely outside its own subnet masking boundary, causing it to drop local device handshakes entirely. 
+* **The Fix:** Manually adjusting the starting IP pool parameters inside the gateway configuration menu to match the active LAN subnet cleanly resolved the layer 3 conflict.
+
+---
+
+## 4. Key Learnings
+
+1. **Architecture Order Matters:** Networking is entirely state-dependent. Forcing handshakes out of sequence or connecting physical components randomly results in lingering communication deadlocks.
+2. **Device Driver Variances:** Identical operating systems from the same manufacturer do not guarantee identical hardware profiles. Multi-port hubs demand specific network adapter drivers that budget or baseline device chipsets may exclude.
+3. **Hidden OS Variables:** Android battery percentages and developer configuration settings (like Tethering Hardware Acceleration) will silently alter system behavior and lock out hardware modules without warning.
+4. **Subnet Alignment:** Factory reset routines are occasionally flawed out of the box. If a gateway's automated DHCP server is misaligned with its local area network address pool, structural communication fails entirely.
