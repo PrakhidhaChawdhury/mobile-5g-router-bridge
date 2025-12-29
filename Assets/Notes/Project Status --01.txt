@@ -1,0 +1,68 @@
+The Hub arrived! 
+
+
+Reset the Jio Router once again to its factory defaults.
+Plugged the ethernet cable to the WAN port and usb hub, then the usb hub to Samsung A35. The ethernet tethering option was available and I toggled it ON. 
+When connected the router with the tethering ON, the network status was No Internet on my PC for the routers Wi-fi connection. 
+
+Physically the lights, green and yellow on the hub and yellow on the router, are static and not flickering. 
+Learnt that yellow light indicates the data transferring and green light indicates the speed at which the data is or can be transferred. 
+
+
+
+
+
+Obstacles:
+
+When connect the PD charger for charging, the phone just refuses to tether. Even after multiple Sequences the moment the Charger is involved, the ethernet toggle is greyed and unavailable. 
+
+No internet Status even after Ethernet Tethering ON. 
+
+Troubleshooting steps taken:
+
+1) The "Wake Up" Sequence
+Unplug the Ethernet cable from the phone hub.
+Turn OFF Ethernet Tethering on your phone.
+Restart the Jio Router (unplug power for 10 seconds and plug back in).
+Wait until the router's WiFi light starts blinking.
+Plug the Ethernet cable back in to the hub and phone.
+Toggle Ethernet Tethering ON.
+
+No progress and still no internet status.
+
+Learning: Sequences actually do matter and not just randomly connect things in networking.
+
+
+2) Turned the DHCP off on the router admin page. 
+Result: The phone then didn't even recognized the device. The ethernet option was blue but couldn't be enabled even after connecting the router with DHCP off. 
+So I turned the DHCP setting ON again to be able to turn on the option again. 
+It didn't worked right away. I think the phone's battery level (12%) had to something with it as a security measure so I charged the it.
+
+Result: The Ethernet Tethering option doesn't turn ON now. 
+
+Learning: More DHCP and it's functions in the network. Network communication of how devices talk to each other and actually network.
+
+
+3) Tried multiple sequences but the result remain same, the Ethernet Option wasn't turning ON. 
+
+4) Tried to connect the ethernet cable to the PC's ethernet port. 
+Observation: The green light is reddish orange now and the yellow light is off after some flickering, likely some communication between them. 
+
+Learning: There's also Red/Orange color too and the Green isn't a fixed color. The colors indicate about the different speed they're able to network.
+
+5) In developer settings, enabled USB Tethering in the Default USB Configuration & Tethering hardware acceleration. 
+Checked if the Data Saver is ON and made sure it's OFF. 
+Observation: LED status showed solid Red/Orange with no Yellow activity light, again.
+
+
+6) Disconnected everything and connected the Ethernet cable to the PC's port and the hub, with the hub not being connected to the phone but is powered via the PD charging port. 
+Observation: The Red/Orange light. 
+It shows that the hub isn't able to communicate properly, as per my understanding and AI's help. 
+
+
+Conclusion for now: After multiple attempts the Ethernet Tethering still didn't toggled ON.
+
+Hypothesis: Since it's a Multi-port hub and not specifically an Adapter so likely driver issues as per my understanding. 
+
+Next Steps: Since the Samsung M36 is only 2 days away, before returning the hub, will give a try with the M36. 
+If still doesn't work, which is likely, I'll order a specific adapter for this and then try with that.

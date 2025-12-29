@@ -1,0 +1,14 @@
+The Samsung M36 5g arrived!
+
+Plugged in the charger to the PD charging port of the Amkette Hub.
+Ethernet cable first connect to the PC port with the hub. 
+Observation: The Same Orange/Red light. So definitely the problem is with the hub or the cable. 
+Connected the hub to the Phone.
+Ethernet option available with the PD charging working. A success than with the A35.
+But this time there was also the yellow light on the ethernet PC port, so there was internet available. On the PC i ran speed test. The speed was relatively really low. 
+
+After that I connected the cable with the ethernet port.
+The router was already in factory default state.
+There was no internet once again. So definately DHCP communication issues. 
+
+
