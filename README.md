@@ -29,7 +29,7 @@ A structured log of reverse-engineering an idle home gateway router to capture, 
 ```
 ---
 
-### 3. The Journey (The How)
+## 3. The Journey (The How)
 
 ### Phase 0: Concept Validation
 Before spending money on any extra hardware or adapters, I wanted to see if it was even possible to share internet traffic this way. 
